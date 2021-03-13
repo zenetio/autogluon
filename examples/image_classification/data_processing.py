@@ -11,15 +11,22 @@ def parse_args():
                         help='training and validation pictures to use.')
     parser.add_argument('--dataset', type=str, default='dog',
                         help='the kaggle competition')
+    parser.add_argument('--csvfile', type=str, default='labels.csv',
+                        help='the csv file')                    
     opt = parser.parse_args()
     return opt
 opt = parse_args()
 
 if opt.dataset == 'dog':
 
-    csvfile = "labels.csv"
+    csvfile = opt.csvfile
     pic_path = "images_all/"
     train_path = "images/"
+    name_csv, ext = csvfile.strip().split('.')
+    if name_csv == 'train' or name_csv == 'val' or name_csv == 'test':
+        train_path = os.path.join(train_path, name_csv)
+        train_path += '/'
+    
     csvfile = os.path.join(opt.data_dir,'dog-breed-identification',csvfile)
     pic_path = os.path.join(opt.data_dir,'dog-breed-identification',pic_path)
     train_path = os.path.join(opt.data_dir,'dog-breed-identification',train_path)
@@ -41,7 +48,8 @@ if opt.dataset == 'dog':
                     os.makedirs(train_path + cl)
                 newpath = train_path + cl + '/' + str(name) + '.jpg'
                 shutil.copyfile(path, newpath)
-                print(str(name) + ',success')
+                #print(str(name) + ',success')
+                print(f"{newpath}, success")
             else:
                 print(str(name) + ",not here")
 elif opt.dataset == 'aerial':
@@ -84,6 +92,3 @@ elif opt.dataset == 'fisheries_Monitoring':
         return name
     df['image'] = df['image'].apply(get_name)
     df.to_csv(csvfile.replace('auto_5_30_fish', 'auto_5_30_fish_add'), index=False)
-
-
-
